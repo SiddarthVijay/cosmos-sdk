@@ -11,9 +11,7 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 )
 
@@ -611,36 +609,36 @@ const (
 	Bech32PubKeyTypeConsPub Bech32PubKeyType = "conspub"
 )
 
-// Bech32ifyPubKey returns a Bech32 encoded string containing the appropriate
-// prefix based on the key type provided for a given PublicKey.
-func Bech32ifyPubKey(pkt Bech32PubKeyType, pubkey crypto.PubKey) (string, error) {
-	var bech32Prefix string
+// // Bech32ifyPubKey returns a Bech32 encoded string containing the appropriate
+// // prefix based on the key type provided for a given PublicKey.
+// func Bech32ifyPubKey(pkt Bech32PubKeyType, pubkey crypto.PubKey) (string, error) {
+// 	var bech32Prefix string
 
-	switch pkt {
-	case Bech32PubKeyTypeAccPub:
-		bech32Prefix = GetConfig().GetBech32AccountPubPrefix()
+// 	switch pkt {
+// 	case Bech32PubKeyTypeAccPub:
+// 		bech32Prefix = GetConfig().GetBech32AccountPubPrefix()
 
-	case Bech32PubKeyTypeValPub:
-		bech32Prefix = GetConfig().GetBech32ValidatorPubPrefix()
+// 	case Bech32PubKeyTypeValPub:
+// 		bech32Prefix = GetConfig().GetBech32ValidatorPubPrefix()
 
-	case Bech32PubKeyTypeConsPub:
-		bech32Prefix = GetConfig().GetBech32ConsensusPubPrefix()
+// 	case Bech32PubKeyTypeConsPub:
+// 		bech32Prefix = GetConfig().GetBech32ConsensusPubPrefix()
 
-	}
+// 	}
 
-	// This piece of code is to keep backwards-compatibility.
-	// For ed25519 keys, our own ed25519 is registered in Amino under a
-	// different name than TM's ed25519. But since users are already using
-	// TM's ed25519 bech32 encoding, we explicitly say to bech32-encode our own
-	// ed25519 the same way as TM's ed25519.
-	// TODO: Remove Bech32ifyPubKey and all usages (cosmos/cosmos-sdk/issues/#7357)
-	pkToMarshal := pubkey
-	if ed25519Pk, ok := pubkey.(*ed25519.PubKey); ok {
-		pkToMarshal = ed25519Pk.AsTmPubKey()
-	}
+// 	// This piece of code is to keep backwards-compatibility.
+// 	// For ed25519 keys, our own ed25519 is registered in Amino under a
+// 	// different name than TM's ed25519. But since users are already using
+// 	// TM's ed25519 bech32 encoding, we explicitly say to bech32-encode our own
+// 	// ed25519 the same way as TM's ed25519.
+// 	// TODO: Remove Bech32ifyPubKey and all usages (cosmos/cosmos-sdk/issues/#7357)
+// 	pkToMarshal := pubkey
+// 	if ed25519Pk, ok := pubkey.(*ed25519.PubKey); ok {
+// 		pkToMarshal = ed25519Pk.AsTmPubKey()
+// 	}
 
-	return bech32.ConvertAndEncode(bech32Prefix, legacy.Cdc.MustMarshalBinaryBare(pkToMarshal))
-}
+// 	return bech32.ConvertAndEncode(bech32Prefix, legacy.Cdc.MustMarshalBinaryBare(pkToMarshal))
+// }
 
 // MustBech32ifyPubKey calls Bech32ifyPubKey except it panics on error.
 func MustBech32ifyPubKey(pkt Bech32PubKeyType, pubkey crypto.PubKey) string {
